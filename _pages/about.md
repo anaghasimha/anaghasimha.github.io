@@ -6,7 +6,7 @@ subtitle: NLP Researcher & Computational Social Scientist
 
 profile:
   align: right
-  image: IMG_2385.heic
+  image: prof_pic.jpg
   image_circular: false
 
 news: false
