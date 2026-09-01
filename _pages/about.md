@@ -16,9 +16,10 @@ social: true
 
 Hi, I'm Anagha. I study how people behave online and why our tools for measuring that behavior are often wrong in ways nobody notices.
 
-I recently finished my MS at Washington University in St. Louis, where I've been working with Dr. Michaela Pagel on a question that sounds simple but isn't: how do macroeconomic shocks affect posting behavior in extremist forums? Spoiler: the word "poor" means very different things depending on who's saying it and where.
+I've always been fascinated by human psychology, but for a long time I didn't know how to connect that curiosity to anything concrete. That changed in a class on financial technologies, where my professor Dr. Michaela Pagel talked about how the 2008 recession shifted people's relationship with banks. Not just their finances, but their trust, their language, their behavior. I was hooked.
 
-I'm also working with Dr. Seid Muhie Yimam at the University of Hamburg on predicting hate speech spikes before they happen. Proactive moderation, because catching it after the fact isn't working.
+After graduating, I emailed her. One thing led to another, and now I'm working with her on exactly the kind of question that fascinated me in that class: how external shocks change how people express themselves online, specifically in extremist forums. Five experiments later, I had a finding that surprised me.
 
-On this blog I write about papers I'm reading, things I'm figuring out, and occasionally the absurdity of trying to measure human behavior with math.
-<!-- Research portfolio of Anagha MV Simha -->
+I'm also working with Dr. Seid Muhie Yimam at the University of Hamburg on predicting hate speech spikes before they happen, because catching it after the fact clearly isn't working.
+
+When I'm not doing research, I'm reading about human behavior and psychology, paying attention to the subtle things people say on social media, and thinking about what those subtleties reveal about us.
