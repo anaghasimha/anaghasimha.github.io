@@ -21,3 +21,4 @@ I recently finished my MS at Washington University in St. Louis, where I've been
 I'm also working with Dr. Seid Muhie Yimam at the University of Hamburg on predicting hate speech spikes before they happen. Proactive moderation, because catching it after the fact isn't working.
 
 On this blog I write about papers I'm reading, things I'm figuring out, and occasionally the absurdity of trying to measure human behavior with math.
+<!-- Research portfolio of Anagha MV Simha -->
