@@ -3,8 +3,5 @@
 # for more information, please refer to the documentation of jekyll-socials plugin: https://github.com/george-gca/jekyll-socials
 cv_pdf: /assets/pdf/Anagha_MV_Academic_CV.pdf
 email: anaghamv55@gmail.com
-inspirehep_id: # leave blank or delete this line
-rss_icon: true
-scholar_userid: # add your Google Scholar ID if you have one
 github_username: anaghasimha
 linkedin_username: anaghasimha
