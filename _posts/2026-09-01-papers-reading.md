@@ -3,7 +3,7 @@ layout: post
 title: Papers I'm Reading
 date: 2026-09-01
 description: A running log of papers I'm reading and what I'm taking away from them.
-tags: reading NLP CSS
+tags: [reading]
 ---
 
 ## August 2026
