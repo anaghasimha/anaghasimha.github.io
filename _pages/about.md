@@ -22,4 +22,6 @@ After graduating, I emailed her. One thing led to another, and now I'm working w
 
 I'm also working with Dr. Seid Muhie Yimam at the University of Hamburg on predicting hate speech spikes before they happen, because catching it after the fact clearly isn't working.
 
+I frequently document the challenges I face in research in my [blog](/blog/), and you can see how I stay connected with the field through the [papers I am reading](/blog/2026/papers-reading/).
+
 I grew up in Bangalore, India. Outside research, I travel whenever I can, read crime fiction, try different cuisines, and spend time with family.
