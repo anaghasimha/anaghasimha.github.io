@@ -1,10 +1,9 @@
 ---
-layout: blog
+layout: default
 permalink: /blog/
-title: Research Notes
+title: blog
 nav: true
-nav_order: 3
-tag: blog
+nav_order: 1
 pagination:
   enabled: true
   collection: posts
