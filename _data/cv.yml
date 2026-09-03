@@ -72,9 +72,26 @@ cv:
         date: "2026"
         note: In preparation. Lead author. Collaboration with University of Hamburg and IIT Kharagpur.
     Skills:
-      - category: Programming
-        skills: Python, SQL, MATLAB, R, C++
-      - category: NLP & ML
-        skills: PyTorch, HuggingFace Transformers, DistilBERT, DeBERTa, Scikit-learn, XGBoost
-      - category: Methods
-        skills: Causal inference, difference-in-differences, panel data, large-scale text analysis
+      - name: Programming
+        level: ""
+        keywords:
+          - Python
+          - SQL
+          - MATLAB
+          - R
+          - C++
+      - name: NLP & ML
+        level: ""
+        keywords:
+          - PyTorch
+          - HuggingFace Transformers
+          - DistilBERT
+          - DeBERTa
+          - Scikit-learn
+      - name: Methods
+        level: ""
+        keywords:
+          - Causal inference
+          - Difference-in-differences
+          - Panel data
+          - Large-scale text analysis
