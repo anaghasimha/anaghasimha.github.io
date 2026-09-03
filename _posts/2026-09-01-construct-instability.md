@@ -3,7 +3,7 @@ layout: post
 title: When "Poor" Means Everything — Construct Instability in NLP Classifiers
 date: 2026-09-01
 description: What happens when your classifier is confidently wrong at scale.
-tags: [blog]
+tags: reading 
 ---
 
 Natural Language Processing (NLP) is a technology that has truly revolutionized how we process text data. Most of NLP's utilization has been in text summarization, recommendations, and filtering reviews, and it does a good job at all of these. But I believe that the biggest challenge for NLP is going to be social media, simply because most of the content is context-dependent. One post can be naive and the other can be harmful, and the difference lives entirely in context.
