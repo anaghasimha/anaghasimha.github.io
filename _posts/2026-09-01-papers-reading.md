@@ -9,7 +9,7 @@ tags: [reading]
 ## August 2026
 
 **Röttger et al. (2022) — "Two Contrasting Data Annotation Paradigms for Subjective NLP Tasks"**
-Descriptive annotation captures how people actually use language; prescriptive annotation enforces a fixed definition. Neither paradigm addresses construct instability across communities — that's the gap my work sits in.
+Descriptive annotation captures how people actually use language; prescriptive annotation enforces a fixed definition. Neither paradigm addresses construct instability across communities. That's the gap my work sits in.
 
 ---
 
@@ -19,7 +19,7 @@ Word embeddings capture cultural meaning as geometric relationships. Gender and 
 ---
 
 **Horta Ribeiro et al. (2023) — "Deplatforming did not decrease Parler users' activity on fringe social media"**
-Deplatforming is ineffective at the aggregate level — fringe activity increased after Parler was taken down. My work adds the individual-level mechanism: casual users disappear, the most extreme users migrate. Together: the aggregate finding is explained by who migrates.
+Deplatforming is ineffective at the aggregate level. Fringe activity increased after Parler was taken down. My work adds the individual-level mechanism: casual users disappear, the most extreme users migrate. Together: the aggregate finding is explained by who migrates.
 
 ---
 
@@ -29,7 +29,7 @@ Annotator demographics and beliefs systematically bias toxicity ratings. Same in
 ---
 
 **de Kock (2024) — "Jointly modelling the evolution of social structure and language in online extremist groups"**
-Dynamic user embeddings and K-means clustering find sub-communities that co-evolve in language and structure. Future work: bot detection via temporal user embeddings — my 10-lifetime-post threshold doesn't filter bots.
+Dynamic user embeddings and K-means clustering find sub-communities that co-evolve in language and structure. Future work: bot detection via temporal user embeddings. My 10-lifetime-post threshold doesn't filter bots.
 
 ---
 
