@@ -61,6 +61,8 @@ Better annotations lead to better model performance — trained RAs outperformed
 
 Giving annotators a definition didn't improve agreement — annotators relied on personal feelings rather than the definition. Inter-annotator agreement was low overall (Krippendorff's alpha 0.19-0.38). Two connections to my work: confirms hate speech is inherently unstable as a construct (same as economic grievance); shows why crowd workers fail (consistent with Donnay et al.). My two-annotator design is stronger than what Ross tested — Pagel and I are domain experts who have read thousands of these posts, not random crowd workers.
 
+---
+
 **Hosseinmardi et al. (2021) — "Examining the Consumption of Radical Content on YouTube"**
 
 Far-right content consumers on YouTube are a small and stable percentage. Connects to my finding that very few users migrated to ExtremeBB after the Reddit ban, but those who did were more toxic. Both findings suggest radicalization is not primarily platform-driven but individual-driven, which has implications for how we design moderation interventions. Platform moderators should concentrate on the core small group propagating harmful content rather than banning entire accounts.
