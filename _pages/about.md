@@ -22,6 +22,13 @@ After graduating, I emailed her. One thing led to another, and now I'm working w
 
 I'm also working with Dr. Seid Muhie Yimam at the University of Hamburg on predicting hate speech spikes before they happen, because catching it after the fact clearly isn't working.
 
-I frequently document the challenges I face in research in my [blog](/blog/), and you can see how I stay connected with the field through the [papers I am reading](/blog/2026/papers-reading/).
-
 I grew up in Bangalore, India. Outside research, I travel whenever I can, read crime fiction, try different cuisines, and spend time with family.
+
+I write about things I'm learning and thinking about. Here's how I organize it:
+
+<div style="background-color: #f5f5f5; border-left: 4px solid #4a90e2; padding: 15px; margin: 20px 0; border-radius: 4px;">
+<b>#notes</b> — Learning notes on ML and NLP topics, written to consolidate my own understanding.<br><br>
+<b>#reading</b> — Papers I'm reading with key takeaways and connections to my own work.<br><br>
+<b>#blog</b> — Longer reflections, research updates, and thoughts on the field.<br><br>
+<b>#tangents</b> — Informal thoughts, rabbit holes, and things I find myself thinking about.
+</div>
