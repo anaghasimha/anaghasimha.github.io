@@ -3,18 +3,18 @@ layout: post
 title: "Bias-Variance Tradeoff"
 date: 2026-09-21
 description: A beginner-friendly introduction to bias-variance tradeoff in machine learning.
-tags: ml explainer
+tags: notes
 ---
 In today’s post, I’ll be discussing bias-variance trade-off, lesser in technical depth, but more towards simple understanding about the topic at hand. As and when I write more blogs, I intend to make them more technical.
 Bias in machine learning is the inability of a machine learning method to capture the true relationship between variables and target.
 
-<img width="468" height="126" alt="image" src="https://github.com/user-attachments/assets/lb-hb.jpeg" />
+![Description](/assets/img/lb-hb.jpeg)
 
 The straight line in the first image shows high bias i.e., the error between actual and predicted values on the testing set is high. Whereas in the squiggly line in the second image, the same error is very low, meaning low bias.
 
 Variance is the difference in fits between different data sets. 
 
-<img width="468" height="84" alt="image" src="https://github.com/user-attachments/assets/lv-hv.jpeg" />
+![Description](/assets/img/lv-hv.jpeg)
 
 The straight line in the first image shows low variance i.e., the error between actual and predicted values on the testing set is comparatively low. Whereas in the squiggly line in the second image, the same error in very high, meaning high variance.
 Ideally, we would prefer a machine learning model that has low bias and low variance, but practical models don’t behave that way. There are several methods like regularization, bagging and boosting to obtain the ‘sweet spot’ between the two extremes of bias and variance.
