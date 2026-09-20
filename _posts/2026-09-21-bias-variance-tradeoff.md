@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Bias-Variance Tradeoff"
-date: 2026-09-21
+date: 2026-09-20
 description: A beginner-friendly introduction to bias-variance tradeoff in machine learning.
 tags: notes
 ---
