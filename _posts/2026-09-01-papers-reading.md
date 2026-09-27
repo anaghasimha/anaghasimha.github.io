@@ -72,5 +72,29 @@ Giving annotators a definition didn't improve agreement. Annotators relied on pe
 
 Far-right content consumers on YouTube are a small and stable percentage. Connects to my finding that very few users migrated to ExtremeBB after the Reddit ban, but those who did were more toxic. Both findings suggest radicalization is not primarily platform-driven but individual-driven, which has implications for how we design moderation interventions. Platform moderators should concentrate on the core small group propagating harmful content rather than banning entire accounts.
 
+---
+
+**C. Thi Nguyen — "Echo Chambers and Epistemic Bubbles"**
+
+Epistemic bubble: you simply don't encounter other viewpoints because the algorithm never surfaces them. Echo chamber: you actively distrust outside sources and dismiss them as biased or fake. Much harder to break. Extremist forums are echo chambers, not just epistemic bubbles. Users don't lack exposure to alternative views, they actively reject them. That's why deplatforming doesn't work: you can ban the platform but you can't undo the distrust.
+
+---
+
+**Baumgartner et al. — "Pushshift Reddit Dataset"**
+
+Pushshift is a Reddit archive containing posts from 2005 to 2019, with interactive Slack bots and built-in graph tools. Useful for Reddit-specific data needs. Stopped updating after 2023 due to Reddit API changes. Contains only Reddit data, no other platforms.
+
+---
+
+**Vaswani et al. — "Attention Is All You Need"**
+
+Key contribution: attention mechanism processes entire sentences simultaneously rather than word by word as in RNN-based models. Faster to train than RNNs because GPUs can be used much more efficiently. Connects to my use of DistilBERT, which is a transformer model pre-trained on Wikipedia data and fine-tuned for my classification task.
+
+---
+
+**Chinn et al. — "How Science Influencers Polarize Supportive and Skeptical Communities Around Politicized Science: A Cross-Platform and Over-Time Comparison"**
+
+Science influencers create in-group vs out-group divisions to hook viewers and build community loyalty, using us-vs-them language similar to what I observe in extremist forums. Connects to my finding that politically motivated forums use economic shocks to intensify out-group scapegoating. Both studies show how group identity shapes online behavior around external stimuli.
+
 
 *Updated regularly. These are my honest takeaways, not summaries.*
