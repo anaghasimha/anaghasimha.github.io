@@ -50,6 +50,8 @@ Zero-shot learning with prompting is comparable to fine-tuned models, especially
 
 ---
 
+## September 2026
+
 **Nefriana et al. — "Leader-driven or Leaderless: How Participation Structure Sustains Engagement and Shapes Narratives in Online Hate Communities"**
 
 Differences in groups and leaders of antisemitic and Islamophobic content. In antisemitic communities, the agenda is more diverse; in Islamophobic communities, topics are narrower. Spike in activity during the Israel-Hamas war. Connects to my finding that toxicity is carried by a small group of people. Policymakers need to know the effects of blanket bans, as this doesn't reduce hate speech propagation.
