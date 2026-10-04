@@ -12,9 +12,9 @@ tags: [notes]
 
 ## 1. What is Knowledge Distillation?
 
-Knowledge distillation is a technique where a smaller "student" model learns from a larger, pre-trained "teacher" model...
+Knowledge distillation is a concept where a smaller "student" model learns from a larger, pre-trained "teacher" model. Instead of training the student on hard labels like [0,0,1], the student is trained to match the soft probabilities produced by the teacher model, like [0.067, 0.1345, 0.7985]. These soft targets contain "dark knowledge". They contain richer information about class similarities, such as a cat looking more like a dog than a car.
+To generate soft probabilities, we take the raw outputs of the final layer of a neural network, called logits, and pass them through a temperature-scaled Softmax function. Here, the temperature T controls how sharp or flat the probability distribution becomes. Standard softmax, i.e., T=1, produces highly confident "peaked" predictions. This hides the dark knowledge in near-zero probabilities. Raising T flattens the distribution as it exposes the relative relationships across non-target classes so the student can learn from the efficiently. 
 
-*(Include your introductory explanation comparing hard vs. soft labels here)*
 
 ---
 
