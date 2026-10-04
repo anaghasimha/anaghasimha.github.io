@@ -1,1 +1,253 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Demystifying Knowledge Distillation: Math, Gradients, and NumPy Implementations | Anagha MV Simha </title> <meta name="author" content="Anagha MV Simha"> <meta name="description" content="NLP researcher and computational social scientist studying trustworthy measurement for subjective social constructs. "> <meta name="keywords" content="NLP, computational social science, hate speech, causal inference, online communities"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%F0%9F%A6%8B&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://anaghasimha.github.io/blog/2026/knowledge-distillation/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Anagha</span> MV Simha </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">CV </a> </li> <li class="nav-item "> <a class="nav-link" href="/travel/">Travel </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="post"> <header class="post-header"> <h1 class="post-title">Demystifying Knowledge Distillation: Math, Gradients, and NumPy Implementations</h1> <p class="post-meta"> Created on October 04, 2026 </p> <p class="post-tags"> <a href="/blog/2026"> <i class="fa-solid fa-calendar fa-sm"></i> 2026 </a>   ·   <a href="/blog/tag/notes"> <i class="fa-solid fa-hashtag fa-sm"></i> notes</a>   ·   <a href="/blog/category/machine-learning"> <i class="fa-solid fa-tag fa-sm"></i> Machine Learning</a>   <a href="/blog/category/deep-learning"> <i class="fa-solid fa-tag fa-sm"></i> Deep Learning</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <blockquote> <p><strong>TL;DR:</strong> Knowledge Distillation transfers “dark knowledge” from a teacher model to a student model using soft probabilities. In this post, we unpack the exact math behind temperature scaling ($T$), prove why loss must be scaled by $T^2$ to avoid vanishing gradients, and verify how high-temperature soft cross-entropy aligns with zero-mean centered MSE in pure NumPy.</p> </blockquote> <hr> <h2 id="1-what-is-knowledge-distillation">1. What is Knowledge Distillation?</h2> <p>Knowledge distillation is a technique where a smaller “student” model learns from a larger, pre-trained “teacher” model…</p> <p><em>(Include your introductory explanation comparing hard vs. soft labels here)</em></p> <hr> <h2 id="2-temperature-scaling-and-dark-knowledge">2. Temperature Scaling and “Dark Knowledge”</h2> <p>To generate soft probabilities, we modify the standard Softmax function by introducing a <strong>Temperature ($T$)</strong> hyperparameter:</p> \[q_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}\] <h3 id="numpy-implementation">NumPy Implementation</h3> <p>```python import numpy as np</p> <p>def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -&gt; np.ndarray: scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T exp_logits = np.exp(scaled_logits) return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)</p> <h2 id="3-gradient-dynamics--the-t2-scaling-factor">3. Gradient Dynamics &amp; The $T^2$ Scaling Factor</h2> <p>Once we obtain soft probability distributions $p$ (teacher) and $q$ (student), we measure how far apart they are using Soft Cross-Entropy. However, simply turning up temperature $T$ introduces a subtle mathematical trap: <strong>it destroys the magnitude of our gradients during backpropagation.</strong></p> <h3 id="the-vanishing-gradient-problem">The Vanishing Gradient Problem</h3> <p>The standard soft cross-entropy loss without temperature scaling is defined as:</p> \[\mathcal{L}_{\text{soft\_raw}} = -\sum_i p_i \log(q_i)\] <p>When we scale logits by temperature $T$, every logit $z_i$ is replaced by $\frac{z_i}{T}$. Applying the chain rule to compute the gradient with respect to the student’s unscaled logits $z$ gives:</p> \[\frac{\partial \mathcal{L}_{\text{soft\_raw}}}{\partial z} = \frac{1}{T}(q - p)\] <p>As temperature $T$ increases, two things happen simultaneously:</p> <ol> <li>The difference between probabilities $(q - p)$ shrinks because higher temperatures flatten both distributions.</li> <li>The entire expression is multiplied by $\frac{1}{T}$.</li> </ol> <p>Because $(q - p)$ itself scales roughly on the order of $\mathcal{O}(1/T)$ at high temperatures, the unscaled gradient shrinks at a rate of $\mathcal{O}(1/T^2)$. If you raise $T$ to $20$ or $100$, <strong>your gradients vanish to near-zero</strong>, and the student model stops learning!</p> <h3 id="the-fix-multiplying-loss-by-t2">The Fix: Multiplying Loss by $T^2$</h3> <p>To ensure gradient magnitudes remain stable regardless of temperature $T$, Geoffrey Hinton et al. scaled the soft cross-entropy loss function by $T^2$:</p> \[\mathcal{L}_{\text{soft}} = - T^2 \sum_i p_i \log(q_i)\] <p>When taking the derivative with respect to $z$, one factor of $T$ cancels out:</p> \[\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z} = T^2 \cdot \frac{1}{T}(q - p) = T(q - p)\] <p>This simple $T^2$ multiplier restores scale invariance, keeping gradient magnitudes steady across different choices of $T$.</p> <h3 id="empirical-proof-in-numpy">Empirical Proof in NumPy</h3> <p>```python import numpy as np</p> <p>def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -&gt; np.ndarray: scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T exp_logits = np.exp(scaled_logits) return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)</p> <h1 id="teacher-v-and-student-z-logits">Teacher (v) and Student (z) logits</h1> <p>v = np.array([2.0, 5.0, 1.0]) z = np.array([1.0, 2.0, 0.0])</p> <p>print(f”{‘Temp (T)’:&lt;10} | {‘Unscaled Grad (q - p)/T’:&lt;25} | {‘Scaled Grad T * (q - p)’:&lt;25}”) print(“-“ * 65)</p> <p>for T in [1.0, 5.0, 20.0, 100.0]: p = softmax_with_temperature(v, T) q = softmax_with_temperature(z, T)</p> <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Unscaled: Gradient shrinks by 1/T^2
+grad_unscaled = (q - p) / T
+
+# Scaled (T^2 factor): Gradient stays scale-invariant
+grad_scaled = T * (q - p)
+
+print(f"T = {T:&lt;8} | {str(np.round(grad_unscaled, 5)):&lt;25} | {str(np.round(grad_scaled, 4)):&lt;25}")
+</code></pre></div></div> <h2 id="4-high-temperature-limit-convergence-to-mse">4. High-Temperature Limit: Convergence to MSE</h2> <p>A fascinating mathematical property of Knowledge Distillation is what happens when temperature $T \to \infty$. At extremely high temperatures, <strong>Soft Cross-Entropy optimization becomes mathematically equivalent to Mean Squared Error (MSE) on raw logits.</strong></p> <h3 id="the-taylor-expansion-proof">The Taylor Expansion Proof</h3> <p>Using the Taylor series approximation $\exp(x) \approx 1 + x$ for small $x = \frac{z}{T}$:</p> \[q_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)} \approx \frac{1 + z_i / T}{\sum_j (1 + z_j / T)} = \frac{1 + z_i / T}{N + \frac{1}{T}\sum_j z_j}\] <p>If we assume zero-mean centered logits ($\sum_j z_j = 0$ and $\sum_j v_j = 0$), this simplifies to:</p> \[q_i \approx \frac{1}{N}\left(1 + \frac{z_i}{T}\right) \quad \text{and} \quad p_i \approx \frac{1}{N}\left(1 + \frac{v_i}{T}\right)\] <p>Substituting these approximations into our scaled gradient formula $\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z_i} = T(q_i - p_i)$:</p> \[\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z_i} \approx T \left( \frac{1}{N}\left(1 + \frac{z_i}{T}\right) - \frac{1}{N}\left(1 + \frac{v_i}{T}\right) \right) = \frac{1}{N}(z_i - v_i)\] <p>This is precisely the gradient of the <strong>Mean Squared Error</strong> loss $\mathcal{L}_{\text{MSE}} = \frac{1}{2N} \Vert{}z - v\Vert{}^2$ computed on zero-mean centered logits!</p> <h3 id="numerical-verification-in-numpy">Numerical Verification in NumPy</h3> <p>```python import numpy as np</p> <p>def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -&gt; np.ndarray: scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T exp_logits = np.exp(scaled_logits) return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)</p> <p>v = np.array([2.0, 5.0, 1.0]) z = np.array([1.0, 2.0, 0.0])</p> <h1 id="1-zero-mean-center-the-logits">1. Zero-mean center the logits</h1> <p>v_centered = v - np.mean(v) z_centered = z - np.mean(z)</p> <h1 id="2-centered-mse-gradient-z_centered---v_centered">2. Centered MSE Gradient: (z_centered - v_centered)</h1> <p>grad_mse_centered = z_centered - v_centered</p> <h1 id="3-soft-cross-entropy-gradient-at-high-t-t--500">3. Soft Cross-Entropy Gradient at High T (T = 50.0)</h1> <p>T = 50.0 p = softmax_with_temperature(v, T) q = softmax_with_temperature(z, T) grad_soft = T * (q - p)</p> <h1 id="multiply-soft-gradient-by-n3-to-place-on-the-same-scale">Multiply soft gradient by N=3 to place on the same scale</h1> <p>print(f”Centered MSE Gradient: {np.round(grad_mse_centered, 4)}”) print(f”Soft Cross-Entropy Grad (T=50): {np.round(3 * grad_soft, 4)}”)</p> <p><strong>Output:</strong> ```text Centered MSE Gradient: [ 0.6667 -1.3333 0.6667] Soft Cross-Entropy Grad (T=50): [ 0.6644 -1.3289 0.6644]</p> <p>At high temperatures, soft cross-entropy gradient matches zero-mean MSE gradient almost perfectly.</p> </div> </article> <br> <hr> <br> <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2> <p class="mb-2">Here are some more articles you might like to read next:</p> <ul class="list-disc pl-7 my-3 space-y-2 marker:text-[var(--global-theme-color)]"> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/diff-in-diff-extremism/">Economic Shocks and Online Extremism: A Difference-in-Differences Approach</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/bias-variance-tradeoff/">Bias-Variance Tradeoff</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/toku/">Toku</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/papers-reading/">Papers I'm Reading</a> </li> <li class="leading-relaxed"> <a class="underline decoration-1 hover:text-[var(--global-hover-color)]" href="/blog/2026/construct-instability/">When "Poor" Means Everything — Construct Instability in NLP Classifiers</a> </li> </ul> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Anagha MV Simha. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Photos from <a href="https://unsplash.com" target="_blank" rel="external nofollow noopener">Unsplash</a>. Last updated: October 04, 2026. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-cv",
+          title: "CV",
+          description: "Research experience, publications, and skills.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/cv/";
+          },
+        },{id: "nav-travel",
+          title: "Travel",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/travel/";
+          },
+        },{id: "post-demystifying-knowledge-distillation-math-gradients-and-numpy-implementations",
+        
+          title: "Demystifying Knowledge Distillation: Math, Gradients, and NumPy Implementations",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/knowledge-distillation/";
+          
+        },
+      },{id: "post-economic-shocks-and-online-extremism-a-difference-in-differences-approach",
+        
+          title: "Economic Shocks and Online Extremism: A Difference-in-Differences Approach",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/diff-in-diff-extremism/";
+          
+        },
+      },{id: "post-bias-variance-tradeoff",
+        
+          title: "Bias-Variance Tradeoff",
+        
+        description: "A beginner-friendly introduction to bias-variance tradeoff in machine learning.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/bias-variance-tradeoff/";
+          
+        },
+      },{id: "post-toku",
+        
+          title: "Toku",
+        
+        description: "A short story about language, time, and the limits of words.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/toku/";
+          
+        },
+      },{id: "post-papers-i-39-m-reading",
+        
+          title: "Papers I'm Reading",
+        
+        description: "A running log of papers I'm reading and what I'm taking away from them.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/papers-reading/";
+          
+        },
+      },{id: "post-when-quot-poor-quot-means-everything-construct-instability-in-nlp-classifiers",
+        
+          title: "When "Poor" Means Everything — Construct Instability in NLP Classifiers",
+        
+        description: "What happens when your classifier is confidently wrong at scale.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/construct-instability/";
+          
+        },
+      },{id: "books-the-godfather",
+          title: 'The Godfather',
+          description: "",
+          section: "Books",handler: () => {
+              window.location.href = "/books/the_godfather/";
+            },},{id: "news-a-simple-inline-announcement",
+          title: 'A simple inline announcement.',
+          description: "",
+          section: "News",},{id: "news-a-long-announcement-with-details",
+          title: 'A long announcement with details',
+          description: "",
+          section: "News",handler: () => {
+              window.location.href = "/news/announcement_2/";
+            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
+          title: 'A simple inline announcement with Markdown emoji! <img class="emoji" title=":sparkles:" alt=":sparkles:" src="https://github.githubassets.com/images/icons/emoji/unicode/2728.png" height="20" width="20"> <img class="emoji" title=":smile:" alt=":smile:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f604.png" height="20" width="20">',
+          description: "",
+          section: "News",},{id: "projects-project-1",
+          title: 'project 1',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/1_project/";
+            },},{id: "projects-project-2",
+          title: 'project 2',
+          description: "a project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/2_project/";
+            },},{id: "projects-project-3-with-very-long-name",
+          title: 'project 3 with very long name',
+          description: "a project that redirects to another website",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/3_project/";
+            },},{id: "projects-project-4",
+          title: 'project 4',
+          description: "another without an image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/4_project/";
+            },},{id: "projects-project-5",
+          title: 'project 5',
+          description: "a project with a background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/5_project/";
+            },},{id: "projects-project-6",
+          title: 'project 6',
+          description: "a project with no image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/6_project/";
+            },},{id: "projects-project-7",
+          title: 'project 7',
+          description: "with background image",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/7_project/";
+            },},{id: "projects-project-8",
+          title: 'project 8',
+          description: "an other project with a background image and giscus comments",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/8_project/";
+            },},{id: "projects-project-9",
+          title: 'project 9',
+          description: "another project with an image 🎉",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/9_project/";
+            },},{id: "teachings-data-science-fundamentals",
+          title: 'Data Science Fundamentals',
+          description: "This course covers the foundational aspects of data science, including data collection, cleaning, analysis, and visualization. Students will learn practical skills for working with real-world datasets.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/data-science-fundamentals/";
+            },},{id: "teachings-introduction-to-machine-learning",
+          title: 'Introduction to Machine Learning',
+          description: "This course provides an introduction to machine learning concepts, algorithms, and applications. Students will learn about supervised and unsupervised learning, model evaluation, and practical implementations.",
+          section: "Teachings",handler: () => {
+              window.location.href = "/teachings/introduction-to-machine-learning/";
+            },},{
+        id: 'social-cv',
+        title: 'CV',
+        section: 'Socials',
+        handler: () => {
+          window.open("/assets/pdf/Anagha_MV_Academic_CV.pdf", "_blank");
+        },
+      },{
+        id: 'social-email',
+        title: 'email',
+        section: 'Socials',
+        handler: () => {
+          window.open("mailto:%61%6E%61%67%68%61@%77%75%73%74%6C.%65%64%75", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/anaghasimha", "_blank");
+        },
+      },{
+        id: 'social-linkedin',
+        title: 'LinkedIn',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://www.linkedin.com/in/anaghasimha", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
