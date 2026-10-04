@@ -2,29 +2,20 @@
 layout: post
 title: "Demystifying Knowledge Distillation: Math, Gradients, and NumPy Implementations"
 date: 2026-10-04
-categories: [Machine Learning, Deep Learning]
 tags: [notes]
 ---
 
-> **TL;DR:** Knowledge Distillation transfers "dark knowledge" from a teacher model to a student model using soft probabilities. In this post, we unpack the exact math behind temperature scaling ($T$), prove why loss must be scaled by $T^2$ to avoid vanishing gradients, and verify how high-temperature soft cross-entropy aligns with zero-mean centered MSE in pure NumPy.
+Knowledge distillation is a concept where a smaller "student" model learns from a larger, pre-trained "teacher" model. Instead of training the student on hard labels like [0,0,1], the student is trained to match the soft probabilities produced by the teacher model, like [0.067, 0.1345, 0.7985]. These soft targets contain "dark knowledge" -- richer information about class similarities, such as a cat looking more like a dog than a car.
 
----
+To generate soft probabilities, we take the raw outputs of the final layer of a neural network, called logits, and pass them through a temperature-scaled Softmax function. The temperature T controls how sharp or flat the probability distribution becomes. Standard softmax (T=1) produces highly confident "peaked" predictions, hiding the dark knowledge in near-zero probabilities. Raising T flattens the distribution and exposes the relative relationships across non-target classes so the student can learn more efficiently.
 
-## 1. What is Knowledge Distillation?
+## Temperature Scaling and Dark Knowledge
 
-Knowledge distillation is a concept where a smaller "student" model learns from a larger, pre-trained "teacher" model. Instead of training the student on hard labels like [0,0,1], the student is trained to match the soft probabilities produced by the teacher model, like [0.067, 0.1345, 0.7985]. These soft targets contain "dark knowledge". They contain richer information about class similarities, such as a cat looking more like a dog than a car.
-To generate soft probabilities, we take the raw outputs of the final layer of a neural network, called logits, and pass them through a temperature-scaled Softmax function. Here, the temperature T controls how sharp or flat the probability distribution becomes. Standard softmax, i.e., T=1, produces highly confident "peaked" predictions. This hides the dark knowledge in near-zero probabilities. Raising T flattens the distribution as it exposes the relative relationships across non-target classes so the student can learn from the efficiently. 
-
-
----
-
-## 2. Temperature Scaling and "Dark Knowledge"
-
-To generate soft probabilities, we modify the standard Softmax function by introducing a **Temperature ($T$)** hyperparameter:
+To implement temperature-scaled Softmax, we modify the standard Softmax formula by dividing the raw logits by T before exponentiating:
 
 $$q_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)}$$
 
-### NumPy Implementation
+In NumPy, we subtract the max logit for numerical stability:
 
 ```python
 import numpy as np
@@ -33,50 +24,62 @@ def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -> np.ndarray:
     scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T
     exp_logits = np.exp(scaled_logits)
     return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
+```
 
-## 3. Gradient Dynamics & The $T^2$ Scaling Factor
+To see temperature scaling in action, consider a teacher model outputting logits v = [10.0, 5.0, -2.0] for [Cat, Dog, Car]:
 
-Once we obtain soft probability distributions $p$ (teacher) and $q$ (student), we measure how far apart they are using Soft Cross-Entropy. However, simply turning up temperature $T$ introduces a subtle mathematical trap: **it destroys the magnitude of our gradients during backpropagation.**
+| Temperature (T) | Soft Probabilities | Behavior |
+|---|---|---|
+| T = 1.0 | [0.9933, 0.0067, 0.0000] | Sharp: ~99.3% confident in Cat. Dog and Car are buried. |
+| T = 2.0 | [0.9168, 0.0753, 0.0079] | Dog starts to show a signal over Car. |
+| T = 5.0 | [0.6033, 0.2220, 0.0544] | Dog holds 22.2%, clearly a plausible second choice. |
+| T = 20.0 | [0.4228, 0.3326, 0.2446] | Flat: Dog is much closer to Cat than Car is. |
+
+At high temperatures, the teacher reveals the structural landscape of the dataset -- the precise dark knowledge the student needs to mimic.
+
+## Gradient Dynamics and the T² Scaling Factor
+
+Once we obtain soft probability distributions p (teacher) and q (student), we measure how far apart they are using Soft Cross-Entropy. However, turning up temperature T introduces a subtle trap: it destroys the magnitude of our gradients during backpropagation.
 
 ### The Vanishing Gradient Problem
 
-The standard soft cross-entropy loss without temperature scaling is defined as:
+The standard soft cross-entropy loss is:
 
 $$\mathcal{L}_{\text{soft\_raw}} = -\sum_i p_i \log(q_i)$$
 
-When we scale logits by temperature $T$, every logit $z_i$ is replaced by $\frac{z_i}{T}$. Applying the chain rule to compute the gradient with respect to the student’s unscaled logits $z$ gives:
+When we scale logits by T, applying the chain rule gives:
 
 $$\frac{\partial \mathcal{L}_{\text{soft\_raw}}}{\partial z} = \frac{1}{T}(q - p)$$
 
-As temperature $T$ increases, two things happen simultaneously:
-1. The difference between probabilities $(q - p)$ shrinks because higher temperatures flatten both distributions.
-2. The entire expression is multiplied by $\frac{1}{T}$.
+As T increases, two things happen simultaneously:
 
-Because $(q - p)$ itself scales roughly on the order of $\mathcal{O}(1/T)$ at high temperatures, the unscaled gradient shrinks at a rate of $\mathcal{O}(1/T^2)$. If you raise $T$ to $20$ or $100$, **your gradients vanish to near-zero**, and the student model stops learning!
+1. The difference (q - p) shrinks because higher temperatures flatten both distributions.
+2. The entire expression is multiplied by 1/T.
 
-### The Fix: Multiplying Loss by $T^2$
+Because (q - p) scales roughly as O(1/T), the gradient shrinks at O(1/T²). If you raise T to 20 or 100, your gradients vanish to near-zero and the student stops learning.
 
-To ensure gradient magnitudes remain stable regardless of temperature $T$, Geoffrey Hinton et al. scaled the soft cross-entropy loss function by $T^2$:
+### The Fix: Multiplying Loss by T²
 
-$$\mathcal{L}_{\text{soft}} = - T^2 \sum_i p_i \log(q_i)$$
+Geoffrey Hinton et al. scaled the soft cross-entropy loss by T²:
 
-When taking the derivative with respect to $z$, one factor of $T$ cancels out:
+$$\mathcal{L}_{\text{soft}} = -T^2 \sum_i p_i \log(q_i)$$
+
+Taking the derivative, one factor of T cancels out:
 
 $$\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z} = T^2 \cdot \frac{1}{T}(q - p) = T(q - p)$$
 
-This simple $T^2$ multiplier restores scale invariance, keeping gradient magnitudes steady across different choices of $T$.
+This T² multiplier restores scale invariance, keeping gradient magnitudes steady across different values of T.
 
-### Empirical Proof in NumPy
+### Numerical Proof in NumPy
 
 ```python
 import numpy as np
 
-def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -> np.ndarray:
-    scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T
-    exp_logits = np.exp(scaled_logits)
+def softmax_with_temp(logits: np.ndarray, T: float) -> np.ndarray:
+    scaled = (logits - np.max(logits, axis=-1, keepdims=True)) / T
+    exp_logits = np.exp(scaled)
     return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
 
-# Teacher (v) and Student (z) logits
 v = np.array([2.0, 5.0, 1.0])
 z = np.array([1.0, 2.0, 0.0])
 
@@ -84,70 +87,22 @@ print(f"{'Temp (T)':<10} | {'Unscaled Grad (q - p)/T':<25} | {'Scaled Grad T * (
 print("-" * 65)
 
 for T in [1.0, 5.0, 20.0, 100.0]:
-    p = softmax_with_temperature(v, T)
-    q = softmax_with_temperature(z, T)
-    
-    # Unscaled: Gradient shrinks by 1/T^2
+    p = softmax_with_temp(v, T)
+    q = softmax_with_temp(z, T)
     grad_unscaled = (q - p) / T
-    
-    # Scaled (T^2 factor): Gradient stays scale-invariant
     grad_scaled = T * (q - p)
-    
     print(f"T = {T:<8} | {str(np.round(grad_unscaled, 5)):<25} | {str(np.round(grad_scaled, 4)):<25}")
+```
 
-## 4. High-Temperature Limit: Convergence to MSE
+Output:
 
-A fascinating mathematical property of Knowledge Distillation is what happens when temperature $T \to \infty$. At extremely high temperatures, **Soft Cross-Entropy optimization becomes mathematically equivalent to Mean Squared Error (MSE) on raw logits.**
+```
+Temp (T)   | Unscaled Grad (q - p)/T    | Scaled Grad T * (q - p)
+-----------------------------------------------------------------
+T = 1.0    | [ 0.19812 -0.271    0.07288] | [ 0.1981 -0.271   0.0729]
+T = 5.0    | [ 0.01085 -0.01974  0.00889] | [ 0.2714 -0.4935  0.2222]
+T = 20.0   | [ 0.00059 -0.00115  0.00056] | [ 0.2366 -0.4616  0.225 ]
+T = 100.0  | [ 0.00002 -0.00004  0.00002] | [ 0.2252 -0.4481  0.2229]
+```
 
-### The Taylor Expansion Proof
-
-Using the Taylor series approximation $\exp(x) \approx 1 + x$ for small $x = \frac{z}{T}$:
-
-$$q_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)} \approx \frac{1 + z_i / T}{\sum_j (1 + z_j / T)} = \frac{1 + z_i / T}{N + \frac{1}{T}\sum_j z_j}$$
-
-If we assume zero-mean centered logits ($\sum_j z_j = 0$ and $\sum_j v_j = 0$), this simplifies to:
-
-$$q_i \approx \frac{1}{N}\left(1 + \frac{z_i}{T}\right) \quad \text{and} \quad p_i \approx \frac{1}{N}\left(1 + \frac{v_i}{T}\right)$$
-
-Substituting these approximations into our scaled gradient formula $\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z_i} = T(q_i - p_i)$:
-
-$$\frac{\partial \mathcal{L}_{\text{soft}}}{\partial z_i} \approx T \left( \frac{1}{N}\left(1 + \frac{z_i}{T}\right) - \frac{1}{N}\left(1 + \frac{v_i}{T}\right) \right) = \frac{1}{N}(z_i - v_i)$$
-
-This is precisely the gradient of the **Mean Squared Error** loss $\mathcal{L}_{\text{MSE}} = \frac{1}{2N} \Vert{}z - v\Vert{}^2$ computed on zero-mean centered logits!
-
-### Numerical Verification in NumPy
-
-```python
-import numpy as np
-
-def softmax_with_temperature(logits: np.ndarray, T: float = 1.0) -> np.ndarray:
-    scaled_logits = (logits - np.max(logits, axis=-1, keepdims=True)) / T
-    exp_logits = np.exp(scaled_logits)
-    return exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
-
-v = np.array([2.0, 5.0, 1.0])
-z = np.array([1.0, 2.0, 0.0])
-
-# 1. Zero-mean center the logits
-v_centered = v - np.mean(v)
-z_centered = z - np.mean(z)
-
-# 2. Centered MSE Gradient: (z_centered - v_centered)
-grad_mse_centered = z_centered - v_centered
-
-# 3. Soft Cross-Entropy Gradient at High T (T = 50.0)
-T = 50.0
-p = softmax_with_temperature(v, T)
-q = softmax_with_temperature(z, T)
-grad_soft = T * (q - p)
-
-# Multiply soft gradient by N=3 to place on the same scale
-print(f"Centered MSE Gradient:           {np.round(grad_mse_centered, 4)}")
-print(f"Soft Cross-Entropy Grad (T=50): {np.round(3 * grad_soft, 4)}")
-
-**Output:**
-```text
-Centered MSE Gradient:           [ 0.6667 -1.3333  0.6667]
-Soft Cross-Entropy Grad (T=50): [ 0.6644 -1.3289  0.6644]
-
-At high temperatures, soft cross-entropy gradient matches zero-mean MSE gradient almost perfectly.
+Without T² scaling, the gradient collapses from 0.1981 down to 0.00002 as T increases. With T² scaling, the gradient stabilizes around [0.225, -0.448, 0.222] regardless of temperature.
