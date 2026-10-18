@@ -6,21 +6,46 @@ categories: [Machine Learning, NLP]
 tags: [notes]
 ---
 
-One-hot encodings represent each word as a sparse binary vector where only one position is 1 and the rest are 0. The problem with one-hot encodings is that every pair of words is equally distant from each other. There is no notion of semantic similarity.
+In this post, we will be understanding the geometry of word embeddings. Word embeddings allow us to create a geometric landscape that shape the meaning based on where we are standing and in which direction. Earlier, one-hot encoding was used to obtain a vector representation of an array. For example, if we had an array A = [cat, dog, lion, elephant], then cat would be encoded as [1,0,0,0], dog as [0,1,0,0], lion as [0,0,1,0] and elephant as [0,0,0,1]. It is impossible to find the angle of similarity in this case because 0 multiplied with any number would give 0. So the similarity would be 0 no matter how probable the next word is. There would be no difference between the words 'cat' and 'dog' ,just like there would be no difference between 'cat' and 'aeroplane'.
 
-Word embeddings fix this by placing words in a geometric space where meaning is encoded as direction and distance. Words that appear in similar contexts end up with similar vectors.
+An embedding space on the other hand would be a vector of similarities, like [0.11, -.58, 0.67, 0.43]. It represents semantic traits along axes we don't explicitly name. Words with similar meanings, like cat and dog, end up close to each other because they were found together in many texts.
 
-But even with embeddings, Euclidean distance has a problem. High-frequency words like "the" appear in almost every context, which inflates their embedding norm. This makes them appear far from most other words even if they point in the same direction.
+The very first technique we think of when we hear measuring distance between two points is the Euclidean distance, i.e.,
 
-Cosine similarity solves this by measuring only the angle between two vectors, ignoring magnitude entirely:
+$$d(u,v) = \|u - v\|_2 = \sqrt{\sum (u_i - v_i)^2}$$
 
-$$\text{Sim}(u, v) = \frac{u \cdot v}{\|u\| \cdot \|v\|}$$
+Consider the sentence "The cat chased the mouse across the threshold of the kitchen, while the dog watched the scene from the porch of the house near the river.". This sentence already contains 9 "the" words, but words like "cat", "mouse", "dog" appear just once. So, the algorithm would think that there is a high similarity between "the" and any other word. So the model ends up learning nothing useful. Let's take a small example to illustrate this challenge:
 
-This is equivalent to L2-normalizing both vectors and taking their dot product. The result is 1 for identical directions, 0 for orthogonal, and -1 for opposite.
+"the" (A hyper-frequent filler word that appears everywhere):
+
+$$v_{\text{the}} = [2.5, 3.0, 4.0]$$
+
+"house" (A specific, content-heavy noun):
+
+$$v_{\text{house}} = [0.5, 0.6, 0.8]$$
+
+Let's find the "length" (magnitude) of each word's vector using the L2 norm formula ($\sqrt{\sum x^2}$):
+
+- Length of "the":
+  $$\|v_{\text{the}}\|_2 = \sqrt{2.5^2 + 3.0^2 + 4.0^2} = \sqrt{6.25 + 9.0 + 16.0} = \sqrt{31.25} \approx 5.59$$
+
+- Length of "house":
+  $$\|v_{\text{house}}\|_2 = \sqrt{0.5^2 + 0.6^2 + 0.8^2} = \sqrt{0.25 + 0.36 + 0.64} = \sqrt{1.25} \approx 1.12$$
+
+Because of this huge value of "the", the model will think that there is no relation between "house" and "the". Cosine similarity, on the other hand, strips away the frequency-driven size of the vector and only looks at what direction the word is pointing.
+
+Cosine similarity does not consider the magnitude and measures only the angle between two vectors.
+
+$$\text{Sim}(u, v) = \frac{u \cdot v}{\|u\|_2 \|v\|_2}$$
+
+If two vectors are unrelated, then the angle would be 90 degree. If they are exact opposites, it would be -1.0 and if they were related, it would be 1.0. By L2-normalizing every vector beforehand, the dot-product of two normalized vectors becomes their cosine similarity.
+
+## NumPy Implementation
 
 ```python
 import numpy as np
 
+# 1. Mock 4-dimensional embeddings for a 5-word vocabulary
 vocab = ["king", "man", "queen", "woman", "apple"]
 
 E = np.array([
@@ -31,19 +56,15 @@ E = np.array([
     [0.05, 0.10, 0.05, 0.05]   # apple
 ])
 
+# 2. Matrix-wide L2 Normalization (keepdims=True ensures proper broadcasting)
 norms = np.linalg.norm(E, axis=1, keepdims=True)
 E_norm = E / norms
+
+# 3. Pairwise Cosine Similarity Matrix (5x5) via single matrix multiplication
 similarity_matrix = E_norm @ E_norm.T
 
 print("Pairwise Similarity Matrix shape:", similarity_matrix.shape)
 print(np.round(similarity_matrix, 2))
 ```
 
-**Output:**
-```text
-[[1.   0.88 0.83 0.72 0.9 ]
- [0.88 1.   0.59 0.65 0.96]
- [0.83 0.59 1.   0.92 0.76]
- [0.72 0.65 0.92 1.   0.83]
- [0.9  0.96 0.76 0.83 1.  ]]
-```
+In this post, I have considered a toy example to illustrate the calculation of vectors of an array. In reality, before training, a word embedding model assigns a random vector to each word. The model is given a massive task to go through billions of text documents. Every time it sees the word "house", it updates the vector. It does the same for "the" as well. However, since we are normalizing the vectors, the number of "the" in a sentence does not matter to the model.
