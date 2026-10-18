@@ -94,9 +94,37 @@ Key contribution: attention mechanism processes entire sentences simultaneously 
 
 ---
 
+## October 2026
+
+
 **Chinn et al. — "How Science Influencers Polarize Supportive and Skeptical Communities Around Politicized Science: A Cross-Platform and Over-Time Comparison"**
 
 Science influencers create in-group vs out-group divisions to hook viewers and build community loyalty, using us-vs-them language similar to what I observe in extremist forums. Connects to my finding that politically motivated forums use economic shocks to intensify out-group scapegoating. Both studies show how group identity shapes online behavior around external stimuli.
+
+---
+
+**Golbeck et al. — "Why I Took the Blackpill": A Thematic Analysis of the Radicalization Process in Incel Communities**
+How people get drawn into incel communities. Helps understand what lexicons are used more commonly and what events affect them.
+
+---
+
+**Ali et al. — "Understanding the Effect of Deplatforming on Social Networks"**
+Uses username matching (string matching and lexicon of old posts compared to new posts) to track user migration across platforms. A methodology that would greatly help address a limitation in my own work.
+
+---
+
+**Beimann et al. — POLAR**
+Works on polarization detection across multiple cultures, languages, and events — a good marker for my proactive moderation paper. Also mentions construct instability. Finds that LLMs perform better than BERT for polarization detection.
+
+---
+
+**Davidson et al. — "Automatic Hate Speech Detection"**
+Provides lexicons commonly used in hate speech datasets and grapples with the ambiguity of social constructs. Already using their benchmark to track the Hate Activity Index.
+
+---
+
+**Rajpurkar et al. — "Know What You Don't Know"**
+Works on reading comprehension by asking LLMs unanswerable questions and observing how they respond. Connects to my reference-free evaluation idea — that systems should know their own limits rather than producing confident wrong answers.
 
 
 *Updated regularly. These are my honest takeaways, not summaries.*
