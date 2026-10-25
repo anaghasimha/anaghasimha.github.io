@@ -32,3 +32,5 @@ I write about things I'm learning and thinking about. Here's how I organize it:
 <b>#blog</b> — Longer reflections, research updates, and thoughts on the field.<br><br>
 <b>#tangents</b> — Informal thoughts, rabbit holes, and things I find myself thinking about.
 </div>
+
+If you find these topics interesting, have feedback, or just want to chat, feel free to reach out. I’d love to hear from you.
