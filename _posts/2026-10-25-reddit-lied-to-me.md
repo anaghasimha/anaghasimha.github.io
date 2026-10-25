@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Toku"
+title: "Reddit Lied To Me (Statistically Speaking)"
 date: 2026-10-25
 description: How a midnight scroll through r/gradadmissions taught me about survivorship bias.
 tags: [tangents]
