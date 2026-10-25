@@ -126,5 +126,20 @@ Provides lexicons commonly used in hate speech datasets and grapples with the am
 **Rajpurkar et al. — "Know What You Don't Know"**
 Works on reading comprehension by asking LLMs unanswerable questions and observing how they respond. Connects to my reference-free evaluation idea — that systems should know their own limits rather than producing confident wrong answers.
 
+---
+
+**Bolukbasi et al. “Man is to Computer Programmer as Woman is to Homemaker? Debiasing Word Embeddings”**
+Word embeddings encode gender bias as a direction in vector space that can be identified and removed. I don’t have a concrete plan yet, but I can see this geometric approach applied to construct instability: mapping where “economic grievance” sits in embedding space across communities and measuring the distance between those positions.
+
+---
+
+**Sap et al. “The Risk of Racial Bias in Hate Speech Detection”**
+Annotators flag African American English at higher rates as hate speech, but when told the speaker is Black, bias decreases. This means demographic context changes annotation behavior, which makes crowd-sourced labels unreliable by default. Motivates reference-free evaluation frameworks that don’t depend on annotator identity signals.
+
+---
+
+**Waseem et al. “Are You a Racist or Am I Seeing Things? Annotator Influence on Hate Speech Detection on Twitter”**
+Even experienced annotators disagree significantly on hate speech labels. Annotation quality varies by annotator background, not just expertise level. Connects directly to my construct instability finding: if humans can’t agree on the definition, classifiers trained on their labels inherit that disagreement.
+
 
 *Updated regularly. These are my honest takeaways, not summaries.*
