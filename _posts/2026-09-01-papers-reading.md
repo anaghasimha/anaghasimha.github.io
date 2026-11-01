@@ -141,5 +141,20 @@ Annotators flag African American English at higher rates as hate speech, but whe
 **Waseem et al. “Are You a Racist or Am I Seeing Things? Annotator Influence on Hate Speech Detection on Twitter”**
 Even experienced annotators disagree significantly on hate speech labels. Annotation quality varies by annotator background, not just expertise level. Connects directly to my construct instability finding: if humans can’t agree on the definition, classifiers trained on their labels inherit that disagreement.
 
+---
+
+**Leonardelli et al. "Agreeing to Disagree: Annotating Offensive Language Datasets with Annotators' Disagreement"**
+Thorough annotation process that sets a gold standard for annotation practices. They show how difficult it is for language models to label ambiguous data, but argue that disagreement should be taken as a signal for more information, not discarded. Directly supports my argument that uncertainty in construct labeling is meaningful and should be preserved.
+
+---
+
+**Blodgett et al. "Language (Technology) is Power: A Critical Survey of 'Bias' in NLP"**
+Provides a framework for validating bias claims and building inclusive NLP systems. Useful for grounding reference-free evaluation frameworks in principled criteria for what counts as bias and who gets to define it.
+
+---
+
+**Obermeyer et al. "Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations"**
+A proxy variable encodes structural bias even when race is excluded from the model. The same argument applies to hate speech classifiers: training labels encode who gets to define harm, which is itself a structural choice. The construct looks neutral but the measurement isn't.
+
 
 *Updated regularly. These are my honest takeaways, not summaries.*
