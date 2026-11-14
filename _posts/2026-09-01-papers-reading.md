@@ -156,5 +156,21 @@ Provides a framework for validating bias claims and building inclusive NLP syste
 **Obermeyer et al. "Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations"**
 A proxy variable encodes structural bias even when race is excluded from the model. The same argument applies to hate speech classifiers: training labels encode who gets to define harm, which is itself a structural choice. The construct looks neutral but the measurement isn't.
 
+---
+
+## November 2026
+
+**Cronbach & Meehl"Construct validity in psychological tests"**
+Argues that measurement is invalid when no criterion or accepted universe of content fully defines the construct being measured.  Foundational for understanding why contested constructs like hate speech resist standard evaluation.
+
+---
+
+**Kulkarni et al. "Statistically significant detection of linguistic change"**
+Introduces a method for detecting diachronic semantic shift using SGNS embeddings trained per time period, with cosine distance and z-score thresholding for statistical significance.
+
+---
+
+**Mikolov et al. "Distributed representations of words and phrases and their compositionality"**
+Introduces Skip-gram with Negative Sampling (SGNS). Trains static word vectors from co-occurrence patterns one vector per word type.
 
 *Updated regularly. These are my honest takeaways, not summaries.*
